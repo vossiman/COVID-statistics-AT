@@ -4,7 +4,7 @@
 
 ### Prerequisites
 
-You'll need Python &gte; 3.6.
+You'll need Python &gte; 3.7 (we are using `@dataclass` introduced in that version).
 
 ### Now start hacking!
 
