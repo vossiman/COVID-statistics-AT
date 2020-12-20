@@ -1,6 +1,8 @@
 import numpy as np
-from lib.util import reds
+import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from lib.util import reds
+
 
 # These are constants that can be used by external libraries
 # we'll use these to rename pandas columns in the data preparation
@@ -29,9 +31,14 @@ def covid_boxplot(data, era=2020, year_col=YEAR, week_col=WEEK, deaths_col=DEATH
     data_post = data[ data[year_col] >= era ]
 
     groupby = data_pre[year_col].unique()
-    plot = data_pre.boxplot(column=[deaths_col],
-                              by=week_col,
-                              figsize=(20,10))
+    
+    # non-transparent, white background
+    fig, plot = plt.subplots(facecolor='white')
+    
+    data_pre.boxplot(ax=plot,
+                     column=[deaths_col],
+                     by=week_col,
+                     figsize=(20,10))
 
     # This will be the legend
     legend_lines = []
