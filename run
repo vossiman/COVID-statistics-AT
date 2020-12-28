@@ -1,0 +1,85 @@
+#!/bin/env bash
+
+# A collection of subcommands.
+# You can call any of the functions defined here as a
+# subcommand. Example:
+#
+# > run startup
+#
+# Originally idea inspired by:
+# <https://www.oilshell.org/blog/2020/02/good-parts-sketch.html#semi-automation-with-runsh-scripts>
+#
+# `help` command idea and execution by André Szabolcs Szelp
+#
+# This file is licenced under the MIT licence:
+# SPDX short id: MIT
+# SPDX URL:      https://spdx.org/licenses/MIT.html
+#
+# The full text of the licence can be found at the bottom of this file.
+
+PID_FILE=.jupyter-lab.pid
+
+function help { # displays the available commands with a short help description
+	tabs 12
+	# grep printing only part of match:
+	# <https://unix.stackexchange.com/a/13472/380932>
+	grep -oP 'function\s+\K[_\w].*' "$0" | tr -d '{' | sed 's/\s*#\s*/\t/'
+	# reset to standard
+	tabs -8
+}
+
+function bootstrap { # bootstraps the project
+	python3 -m venv .pyenv
+	source .pyenv/bin/activate
+	# install dependencies
+	pip install pandas
+	pip install matplotlib
+	# install JupyterLab, our choice of IDE
+	pip install jupyterlab
+}
+
+function startup { # starts up JupyterLab for development
+	bootstrap
+
+	source .pyenv/bin/activate
+	jupyter-lab &
+	echo $! > ${PID_FILE}
+}
+
+function shutdown { # kills the JupyterLab server
+	kill $(cat ${PID_FILE})
+	rm ${PID_FILE}
+}
+
+function reopen { # reopens the JupyterLab notebook. Use if you closed your browser
+	 xdg-open http://localhost:8888/
+}
+
+# This is where the magic lives!
+# This enables us to call any of the functions defined in
+# this script directly from shell as a subcommand:
+# > run startup
+#
+"${@:-help}"
+
+# 
+# Copyright (c) 2020 André Szabolcs Szelp
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+# FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+# COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+# IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+# CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+# 

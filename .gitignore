@@ -1,0 +1,5 @@
+.ipynb_checkpoints
+*~
+.pyenv
+.jupyter-lab.pid
+**/__pycache__
